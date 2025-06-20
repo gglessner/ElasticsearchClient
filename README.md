@@ -51,6 +51,17 @@ python ElasticsearchClient.py localhost 9200 --username elastic --password chang
 python ElasticsearchClient.py localhost 9200 --output security_report.json
 ```
 
+### Comprehensive Testing
+
+For thorough testing of all functions against your Elasticsearch server:
+
+```bash
+# Run comprehensive audit with all security checks
+python run_full_audit.py
+```
+
+This will generate a timestamped report file: `es_<host>_<port>_<YYYYMMDD_HHMMSS>.json`
+
 ### Command Line Options
 
 - `host`: Elasticsearch host address
@@ -73,6 +84,9 @@ python ElasticsearchClient.py elastic.company.com 9200 --tls --username admin --
 
 # Generate detailed report
 python ElasticsearchClient.py <host> <port> --output audit_report.json --verbose
+
+# Comprehensive audit with auto-generated filename
+python run_full_audit.py
 ```
 
 ## Security Features
@@ -103,6 +117,7 @@ python ElasticsearchClient.py <host> <port> --output audit_report.json --verbose
 ### Reporting
 - Generates a comprehensive JSON report with all findings, categorized by severity (HIGH, MEDIUM, LOW, INFO).
 - Summarizes total findings and highlights high-severity issues.
+- Auto-generates timestamped filenames for easy organization.
 
 ### Non-Destructive, Production-Safe
 - All checks are read-only and do not modify data or settings.
@@ -112,10 +127,16 @@ python ElasticsearchClient.py <host> <port> --output audit_report.json --verbose
 
 The tool generates comprehensive reports including:
 
-- **Audit Metadata:** Tool information, timestamp, target details
+- **Audit Metadata:** Tool information, scan timestamp, detailed target information
 - **Security Findings:** Categorized by severity (HIGH, MEDIUM, LOW, INFO)
 - **Detailed Information:** Technical details for each finding
 - **Summary Statistics:** Count of findings by severity level
+
+### Report Filename Format
+
+Reports are automatically saved with the format: `es_<host>_<port>_<YYYYMMDD_HHMMSS>.json`
+
+Example: `es_127.0.0.1_9200_20250619_204510.json`
 
 ### Sample Output
 
@@ -125,29 +146,31 @@ The tool generates comprehensive reports including:
     "tool": "Elasticsearch Security Auditor",
     "author": "Garland Glessner <gglessner@gmail.com>",
     "license": "GNU General Public License v3.0",
-    "timestamp": "2024-01-15T10:30:00",
-    "target": "<host>:<port>",
-    "tls_enabled": false
+    "scan_timestamp": "2025-06-19T20:45:08.433529",
+    "target": {
+      "host": "127.0.0.1",
+      "port": 9200,
+      "full_address": "127.0.0.1:9200"
+    },
+    "connection": {
+      "tls_enabled": false,
+      "protocol": "http",
+      "username": "elastic"
+    }
   },
   "summary": {
-    "total_findings": 12,
-    "high_severity": 2,
-    "medium_severity": 3,
-    "low_severity": 1,
-    "info": 6
+    "total_findings": 20,
+    "high_severity": 1,
+    "medium_severity": 4,
+    "low_severity": 0,
+    "info": 14
   },
   "findings": [
     {
       "severity": "HIGH",
-      "title": "Known Vulnerabilities (NVD)",
-      "description": "Version 7.9.3 has known CVEs in NVD",
-      "details": {
-        "version": "7.9.3",
-        "cves": [
-          {"id": "CVE-2021-22132", "description": "...", "cvssV3": "...", "published": "...", "lastModified": "..."}
-        ]
-      },
-      "timestamp": "2024-01-15T10:30:05"
+      "title": "Security Disabled",
+      "description": "X-Pack security may not be enabled - cluster may be unprotected",
+      "timestamp": "2025-06-19T20:45:08.433529"
     }
   ]
 }

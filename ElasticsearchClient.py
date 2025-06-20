@@ -602,9 +602,17 @@ class ElasticsearchAuditor:
                 'tool': 'Elasticsearch Security Auditor',
                 'author': 'Garland Glessner <gglessner@gmail.com>',
                 'license': 'GNU General Public License v3.0',
-                'timestamp': datetime.now().isoformat(),
-                'target': f"{self.host}:{self.port}",
-                'tls_enabled': self.use_tls
+                'scan_timestamp': datetime.now().isoformat(),
+                'target': {
+                    'host': self.host,
+                    'port': self.port,
+                    'full_address': f"{self.host}:{self.port}"
+                },
+                'connection': {
+                    'tls_enabled': self.use_tls,
+                    'protocol': 'https' if self.use_tls else 'http',
+                    'username': self.username if self.username else 'none'
+                }
             },
             'summary': {
                 'total_findings': len(self.audit_results['findings']),
