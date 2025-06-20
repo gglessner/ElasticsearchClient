@@ -39,7 +39,7 @@ A comprehensive, production-safe security auditing tool for Elasticsearch cluste
 
 ```bash
 # Connect to local Elasticsearch
-python ElasticsearchClient.py localhost 9200
+python ElasticsearchClient.py <host> <port>
 
 # Connect with TLS/SSL
 python ElasticsearchClient.py elasticsearch.example.com 9200 --tls
@@ -66,13 +66,13 @@ python ElasticsearchClient.py localhost 9200 --output security_report.json
 
 ```bash
 # Basic security audit
-python ElasticsearchClient.py 192.168.1.100 9200
+python ElasticsearchClient.py <host> <port>
 
 # TLS-enabled audit with authentication
 python ElasticsearchClient.py elastic.company.com 9200 --tls --username admin --password secure123
 
 # Generate detailed report
-python ElasticsearchClient.py localhost 9200 --output audit_report.json --verbose
+python ElasticsearchClient.py <host> <port> --output audit_report.json --verbose
 ```
 
 ## Security Features
@@ -126,7 +126,7 @@ The tool generates comprehensive reports including:
     "author": "Garland Glessner <gglessner@gmail.com>",
     "license": "GNU General Public License v3.0",
     "timestamp": "2024-01-15T10:30:00",
-    "target": "localhost:9200",
+    "target": "<host>:<port>",
     "tls_enabled": false
   },
   "summary": {

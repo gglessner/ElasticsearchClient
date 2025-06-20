@@ -26,6 +26,17 @@ import nvdlib
 # Suppress SSL warnings for security testing
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
+def json_serializer(obj):
+    """Custom JSON serializer for objects not serializable by default json code"""
+    if hasattr(obj, '__dict__'):
+        return obj.__dict__
+    elif hasattr(obj, 'to_dict'):
+        return obj.to_dict()
+    elif hasattr(obj, '__iter__') and not isinstance(obj, (str, bytes, bytearray)):
+        return list(obj)
+    else:
+        return str(obj)
+
 class ElasticsearchAuditor:
     def __init__(self, host, port, use_tls=False, username=None, password=None, timeout=30):
         """
@@ -75,7 +86,7 @@ class ElasticsearchAuditor:
                 [url],
                 basic_auth=auth,
                 verify_certs=verify_ssl,
-                timeout=self.timeout,
+                request_timeout=self.timeout,
                 max_retries=3,
                 retry_on_timeout=True
             )
@@ -607,10 +618,10 @@ class ElasticsearchAuditor:
         
         if output_file:
             with open(output_file, 'w') as f:
-                json.dump(report, f, indent=2)
+                json.dump(report, f, indent=2, default=json_serializer)
             print(f"[+] Report saved to {output_file}")
         else:
-            print(json.dumps(report, indent=2))
+            print(json.dumps(report, indent=2, default=json_serializer))
         
         return report
     
